@@ -11,81 +11,68 @@ namespace API.Data.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropPrimaryKey(
-                name: "PK_Users",
-                table: "Users");
-
-            migrationBuilder.RenameTable(
-                name: "Users",
-                newName: "Photos");
-
             migrationBuilder.AddColumn<string>(
                 name: "Country",
-                table: "Photos",
+                table: "Users",
                 type: "TEXT",
                 nullable: false,
                 defaultValue: "");
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "Created",
-                table: "Photos",
+                table: "Users",
                 type: "TEXT",
                 nullable: false,
                 defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
 
             migrationBuilder.AddColumn<DateOnly>(
                 name: "DateOfBirth",
-                table: "Photos",
+                table: "Users",
                 type: "TEXT",
                 nullable: false,
                 defaultValue: new DateOnly(1, 1, 1));
 
             migrationBuilder.AddColumn<string>(
                 name: "Gender",
-                table: "Photos",
+                table: "Users",
                 type: "TEXT",
                 nullable: false,
                 defaultValue: "");
 
             migrationBuilder.AddColumn<string>(
                 name: "Interests",
-                table: "Photos",
+                table: "Users",
                 type: "TEXT",
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "Introduction",
-                table: "Photos",
+                table: "Users",
                 type: "TEXT",
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "KnownAs",
-                table: "Photos",
+                table: "Users",
                 type: "TEXT",
                 nullable: false,
                 defaultValue: "");
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "LastActive",
-                table: "Photos",
+                table: "Users",
                 type: "TEXT",
                 nullable: false,
                 defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
 
             migrationBuilder.AddColumn<string>(
                 name: "LookingFor",
-                table: "Photos",
+                table: "Users",
                 type: "TEXT",
                 nullable: true);
 
-            migrationBuilder.AddPrimaryKey(
-                name: "PK_Photos",
-                table: "Photos",
-                column: "Id");
-
             migrationBuilder.CreateTable(
-                name: "Photo",
+                name: "Photos",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
@@ -97,18 +84,18 @@ namespace API.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Photo", x => x.Id);
+                    table.PrimaryKey("PK_Photos", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Photo_Photos_AppUserId",
+                        name: "FK_Photos_Users_AppUserId",
                         column: x => x.AppUserId,
-                        principalTable: "Photos",
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Photo_AppUserId",
-                table: "Photo",
+                name: "IX_Photos_AppUserId",
+                table: "Photos",
                 column: "AppUserId");
         }
 
@@ -116,56 +103,43 @@ namespace API.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Photo");
-
-            migrationBuilder.DropPrimaryKey(
-                name: "PK_Photos",
-                table: "Photos");
+                name: "Photos");
 
             migrationBuilder.DropColumn(
                 name: "Country",
-                table: "Photos");
+                table: "Users");
 
             migrationBuilder.DropColumn(
                 name: "Created",
-                table: "Photos");
+                table: "Users");
 
             migrationBuilder.DropColumn(
                 name: "DateOfBirth",
-                table: "Photos");
+                table: "Users");
 
             migrationBuilder.DropColumn(
                 name: "Gender",
-                table: "Photos");
+                table: "Users");
 
             migrationBuilder.DropColumn(
                 name: "Interests",
-                table: "Photos");
+                table: "Users");
 
             migrationBuilder.DropColumn(
                 name: "Introduction",
-                table: "Photos");
+                table: "Users");
 
             migrationBuilder.DropColumn(
                 name: "KnownAs",
-                table: "Photos");
+                table: "Users");
 
             migrationBuilder.DropColumn(
                 name: "LastActive",
-                table: "Photos");
+                table: "Users");
 
             migrationBuilder.DropColumn(
                 name: "LookingFor",
-                table: "Photos");
-
-            migrationBuilder.RenameTable(
-                name: "Photos",
-                newName: "Users");
-
-            migrationBuilder.AddPrimaryKey(
-                name: "PK_Users",
-                table: "Users",
-                column: "Id");
+                table: "Users");
         }
     }
 }
