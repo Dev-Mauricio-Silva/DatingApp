@@ -1,5 +1,5 @@
 export interface Photo {
     id: number
-    photoUrl: any
+    url: any
     isMain: boolean
   }
