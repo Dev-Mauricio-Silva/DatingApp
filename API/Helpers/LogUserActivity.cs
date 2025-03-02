@@ -1,7 +1,6 @@
 using API.Extensions;
 using API.Interfaces;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.CodeAnalysis;
 
 namespace API.Helpers;
 
