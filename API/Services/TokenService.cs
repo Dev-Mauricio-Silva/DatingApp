@@ -17,6 +17,8 @@ public class TokenService(IConfiguration config) : ITokenService
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenKey));
 
+        if(user.UserName == null) throw new Exception("User name not found");
+
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
