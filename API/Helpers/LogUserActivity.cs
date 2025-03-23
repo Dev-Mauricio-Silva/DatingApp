@@ -14,10 +14,10 @@ public class LogUserActivity : IAsyncActionFilter
 
         var userId = resultContext.HttpContext.User.GetUserId();
 
-        var repo = resultContext.HttpContext.RequestServices.GetRequiredService<IUserRepository>();
-        var user = await repo.GetUserByIdAsync(userId);
+        var unityOfWork = resultContext.HttpContext.RequestServices.GetRequiredService<IUnityOfWork>();
+        var user = await unityOfWork.UserRepository.GetUserByIdAsync(userId);
         if(user == null) return;
         user.LastActive = DateTime.UtcNow;
-        await repo.SaveAllAsync();
+        await unityOfWork.Complete();
     }
 }

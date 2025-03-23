@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers
 {
     [Authorize]
-    public class MessagesController(IMessageRepository messageRepository, IUserRepository userRepository, 
+    public class MessagesController(IUnityOfWork unityOfWork, 
     IMapper mapper) : BaseApiController
     {
         [HttpPost]
@@ -21,8 +21,8 @@ namespace API.Controllers
             if(username == createMessageDto.RecipientUsername.ToLower())    
                 return BadRequest("You cannot message yourself");
             
-            var sender = await userRepository.GetUserByUsernameAsync(username);
-            var recipient = await userRepository.GetUserByUsernameAsync(createMessageDto.RecipientUsername);
+            var sender = await unityOfWork.UserRepository.GetUserByUsernameAsync(username);
+            var recipient = await unityOfWork.UserRepository.GetUserByUsernameAsync(createMessageDto.RecipientUsername);
 
             if(recipient == null || sender == null || sender.UserName == null || recipient.UserName == null) 
                 return BadRequest("Cannot send message at this time");
@@ -36,9 +36,9 @@ namespace API.Controllers
                Content = createMessageDto.Content
             };
 
-            messageRepository.AddMessage(message);
+            unityOfWork.MessageRepository.AddMessage(message);
 
-            if(await messageRepository.SaveAllAsync()) return Ok(mapper.Map<MessageDto>(message));
+            if(await unityOfWork.Complete()) return Ok(mapper.Map<MessageDto>(message));
 
             return BadRequest("Failed to save message.");
 
@@ -50,7 +50,7 @@ namespace API.Controllers
         {
             messageParams.Username = User.GetUserName();
 
-            var messages = await messageRepository.GetMessagesForUser(messageParams);
+            var messages = await unityOfWork.MessageRepository.GetMessagesForUser(messageParams);
 
             Response.AddPaginationHeader(messages);
 
@@ -62,7 +62,7 @@ namespace API.Controllers
         {
             var currentUsername = User.GetUserName();
 
-            return Ok(await messageRepository.GetMessageThread(currentUsername, username));
+            return Ok(await unityOfWork.MessageRepository.GetMessageThread(currentUsername, username));
         }
 
         [HttpDelete("{id}")]
@@ -70,7 +70,7 @@ namespace API.Controllers
         {
             var username = User.GetUserName();
 
-            var message = await messageRepository.GetMessage(id);
+            var message = await unityOfWork.MessageRepository.GetMessage(id);
 
             if(message == null) return BadRequest("Cannot delete this message");
 
@@ -81,10 +81,10 @@ namespace API.Controllers
             if(message.RecipientUsername == username) message.RecipientDeleted = true;
 
             if(message is {SenderDeleted: true, RecipientDeleted: true}){
-                messageRepository.DeleteMessage(message);
+                unityOfWork.MessageRepository.DeleteMessage(message);
             }
 
-            if(await messageRepository.SaveAllAsync()) return Ok();
+            if(await unityOfWork.Complete()) return Ok();
 
             return BadRequest("Failed to delete message");
         }
